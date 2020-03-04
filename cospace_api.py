@@ -13,7 +13,7 @@ class CospaceAPI(object):
         self.password = passwd
 
         # get session information on api.cospace.de
-        initial_connection = http.client.HTTPConnection("api.cospace.de")
+        initial_connection = http.client.HTTPSConnection("api.cospace.de")
         initial_connection.request("GET", "/api/session")
 
         # result is JSON encoded
@@ -22,14 +22,14 @@ class CospaceAPI(object):
         # print response
         print("session response: " + str(response))
 
-        # cut http:// prefix (7 characters) from server returned in JSON
-        apiServer = response["server"][7:]
+        # cut "https://" prefix (8 characters) from server returned in JSON
+        apiServer = response["server"][8:]
 
         # remember the session id
         self.session_id = response["sid"]
 
         # create the connection for the following API requests
-        self.apiConnection = http.client.HTTPConnection(apiServer)
+        self.apiConnection = http.client.HTTPSConnection(apiServer)
 
         #
         # Authenticate the session
@@ -75,7 +75,7 @@ class CospaceAPI(object):
     def sensor_data(self, sens_uuid, from_epoch, to_epoch, count):
         # Create msg url
         msg_url = "/api/sensor/" + sens_uuid + "/data?sid=" + self.session_id
-        msg_url = msg_url + "&from=" + from_epoch + "&to=" + to_epoch + "&count=" + str(count)
+        msg_url = msg_url + "&from=" + from_epoch + "&to=" + to_epoch + "&count=" + str(count) + "&order=asc"
         # print("URL is" + msg_url)
 
         # Get requested data point(s)
